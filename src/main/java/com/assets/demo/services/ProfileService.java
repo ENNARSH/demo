@@ -5,6 +5,7 @@ import com.assets.demo.models.Profile;
 import com.assets.demo.repository.ProfileRepo;
 import com.assets.demo.utils.ProfileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,12 +22,14 @@ public class ProfileService {
 
     public Profile createProfile(ProfileDTO profileDTO) {
         Profile builtProfile = buildBody(profileDTO);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String encryptedPassword = passwordEncoder.encode(profileDTO.getPassword());
+        builtProfile.setPassword(encryptedPassword);
         return profileRepo.save(builtProfile);
     }
 
     private Profile buildBody(ProfileDTO profileDTO) {
         String username = profileDTO.getUsername();
-//        String encryptedPassword = encryptPassword(profileDTO.getPassword());
         String lowUsername = username.toLowerCase();
         return Profile.builder()
                 .username(username)
@@ -36,11 +39,6 @@ public class ProfileService {
                 .password(profileDTO.getPassword())
                 .build();
     }
-
-//    private String encryptPassword(String password) {
-//        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-//        return passwordEncoder.encode(password);
-//    }
 
     public Profile getProfileById(String id) {
         return profileRepo.findById(id).orElse(null);
