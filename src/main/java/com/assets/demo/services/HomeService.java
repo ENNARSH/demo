@@ -21,11 +21,13 @@ public class HomeService {
 
     private Home buildBody(HomeDTO homeDTO) {
         String homeName = homeDTO.getName().trim();
-        String homeId = homeDTO.getUsername().toLowerCase() + ":" + homeName.toLowerCase().replace(" ", "_");
+        String homeId = homeDTO.getUsername().toLowerCase() + ":" + homeName.toLowerCase()
+                .replace(" ", "_");
         return Home.builder()
                 .id(homeId)
                 .name(homeName)
-                .username(homeDTO.getUsername())
+                .usernameID(homeDTO.getUsername())
+                .position(homeDTO.getPosition())
                 .build();
     }
 

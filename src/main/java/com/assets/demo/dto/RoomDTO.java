@@ -9,6 +9,5 @@ import lombok.Data;
 public class RoomDTO {
 
     private String name;
-    private String homeId;
-
+    private String homeID;
 }

@@ -14,10 +14,11 @@ public class Home {
     @Id
     private String id;
     private String name;
-    private String username;
+    private String usernameID;
+    private Position position;
 
     public boolean belongsToProfile(HomeDTO homeDTO) {
-        return this.username.equals(homeDTO.getUsername());
+        return this.usernameID.equals(homeDTO.getUsername());
     }
 
 }

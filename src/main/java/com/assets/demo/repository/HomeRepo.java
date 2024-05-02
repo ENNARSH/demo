@@ -12,12 +12,13 @@ public interface HomeRepo extends ElasticsearchRepository<Home, String> {
 
     Optional<Home> findByName(String name);
 
-    Home findByUsername(String username);
+    Home findByUsernameID(String usernameID);
 
     Optional findById(String id);
 
-    Home findByUsernameAndName(String username, String name);
+    Home findByUsernameIDAndName(String usernameID, String name);
 
-    // List<Home> findAllHomesByUsername(String username);
+//    void deleteByUsernameID(String usernameID);
+
 
 }

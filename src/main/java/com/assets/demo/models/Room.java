@@ -13,6 +13,6 @@ public class Room {
     @Id
     private String id;
     private String name;
-
+    private String homeID;
 
 }

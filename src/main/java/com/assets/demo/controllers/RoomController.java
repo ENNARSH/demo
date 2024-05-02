@@ -23,8 +23,8 @@ public class RoomController {
     @PostMapping()
     public ResponseEntity<?> createRoom(@RequestBody RoomDTO roomDTO) {
         try {
-            Home home = homeService.getHomeById(roomDTO.getHomeId());
-            roomDTO.setHomeId(home.getId());
+            Home home = homeService.getHomeById(roomDTO.getHomeID());
+            roomDTO.setHomeID(home.getId());
             Room createdRoom = roomService.createRoom(roomDTO);
             return ResponseEntity.ok(createdRoom);
         } catch (IllegalArgumentException e) {
