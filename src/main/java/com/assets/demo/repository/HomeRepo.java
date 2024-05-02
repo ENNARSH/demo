@@ -18,7 +18,7 @@ public interface HomeRepo extends ElasticsearchRepository<Home, String> {
 
     Home findByUsernameIDAndName(String usernameID, String name);
 
-//    void deleteByUsernameID(String usernameID);
+    void deleteByUsernameID(String usernameID);
 
 
 }

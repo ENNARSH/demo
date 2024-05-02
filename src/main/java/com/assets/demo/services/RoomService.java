@@ -19,14 +19,18 @@ public class RoomService {
 
     private Room buildBody(RoomDTO roomDTO) {
         String cleanedRoomName = roomDTO.getName().trim();
-        String roomId = roomDTO.getHomeID() + ":" + cleanedRoomName.toLowerCase()
-                .replace(" ", "_");
+        String roomId = roomDTO.getHomeID() + ":" + cleanedRoomName.toLowerCase().replace(" ", "_");
+
+        String[] parts = roomDTO.getHomeID().split(":");
+
         return Room.builder()
                 .id(roomId)
                 .name(cleanedRoomName)
                 .homeID(roomDTO.getHomeID())
+                .usernameID(parts[0])
                 .build();
     }
+
 
 
     public Room getRoomById(String id) {

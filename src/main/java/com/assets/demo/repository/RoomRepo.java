@@ -12,5 +12,6 @@ public interface RoomRepo extends ElasticsearchRepository<Room, String> {
 
     Optional<Home> findByName(String name);
 
+    void deleteByUsernameID(String usernameID);
 
 }

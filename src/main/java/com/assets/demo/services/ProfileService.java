@@ -2,11 +2,14 @@ package com.assets.demo.services;
 
 import com.assets.demo.dto.ProfileDTO;
 import com.assets.demo.models.Profile;
+import com.assets.demo.repository.HomeRepo;
 import com.assets.demo.repository.ProfileRepo;
+import com.assets.demo.repository.RoomRepo;
 import com.assets.demo.utils.ProfileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +21,12 @@ public class ProfileService {
 
     @Autowired
     private ProfileUtils profileUtils;
+
+    @Autowired
+    private HomeRepo homeRepo;
+
+    @Autowired
+    private RoomRepo roomRepo;
 
 
     public Profile createProfile(ProfileDTO profileDTO) {
@@ -48,13 +57,21 @@ public class ProfileService {
         return profileRepo.findAllIds();
     }
 
+    @Transactional
     public boolean deleteProfileById(String id) {
         if (profileRepo.existsById(id)) {
-            profileRepo.deleteById(id);
-            return true;
-        } else {
-            return false;
+            Profile profile = profileRepo.findById(id).orElse(null);
+            if (profile != null) {
+                String username = profile.getUsername();
+                profileRepo.delete(profile);
+                // Elimina le case associate al profilo
+                homeRepo.deleteByUsernameID(username);
+                // Elimina le stanze associate al profilo
+                roomRepo.deleteByUsernameID(username);
+                return true;
+            }
         }
+        return false;
     }
 
     public Profile updateProfile(String id, ProfileDTO profileDTO) {
