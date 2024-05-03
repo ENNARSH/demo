@@ -4,9 +4,12 @@ import com.assets.demo.dto.HomeDTO;
 import com.assets.demo.models.Home;
 import com.assets.demo.services.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Locale;
 
 
 @RestController
@@ -16,50 +19,62 @@ public class HomeController {
     @Autowired
     private HomeService homeService;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @PostMapping()
     public ResponseEntity<?> createHome(@RequestBody HomeDTO homeDTO) {
         try {
             Home createdHome = homeService.createHome(homeDTO);
             return ResponseEntity.ok(createdHome);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            String errorMessage = messageSource.getMessage("create.error", new Object[]{e.getMessage()}, Locale.getDefault());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorMessage);
         }
     }
 
     @GetMapping("/{username}/{id}")
     public ResponseEntity<Home> getHomeById(@PathVariable HomeDTO homeDTO, @PathVariable String id) {
-        Home home = homeService.getHomeById(id);
-        if (home != null) {
-            if (home.belongsToProfile(homeDTO)) {
+        try {
+            Home home = homeService.getHomeById(id);
+            if (home != null && home.belongsToProfile(homeDTO)) {
                 return new ResponseEntity<>(home, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN); // Accesso vietato se la casa non appartiene al profilo
             }
-        } else {
+        } catch (Exception e) {
+            messageSource.getMessage("not.found", new Object[]{id}, Locale.getDefault());
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteHomeById(@PathVariable String id) {
-        boolean deleted = homeService.deleteHomeById(id);
-        if (deleted) {
-            return ResponseEntity.ok("Casa eliminata con successo");
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Casa non trovata");
+        try {
+            boolean deleted = homeService.deleteHomeById(id);
+            if (deleted) {
+                String successMessage = messageSource.getMessage("deleted.success", new Object[]{id}, Locale.getDefault());
+                return ResponseEntity.ok(successMessage);
+            } else {
+                String errorMessage = messageSource.getMessage("not.found", new Object[]{id}, Locale.getDefault());
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(messageSource.getMessage("error.deleting", null, Locale.getDefault()));
         }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Home> updateHome(@PathVariable String id, @RequestBody HomeDTO homeDTO) {
-        Home updatedHome = homeService.updateHome(homeDTO);
-        if (updatedHome != null) {
-            if (updatedHome.belongsToProfile(homeDTO)) {
+        try {
+            Home updatedHome = homeService.updateHome(homeDTO);
+            if (updatedHome != null && updatedHome.belongsToProfile(homeDTO)) {
                 return ResponseEntity.ok(updatedHome);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
-        } else {
+        } catch (Exception e) {
+            messageSource.getMessage("not.found", new Object[]{id}, Locale.getDefault());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
     }

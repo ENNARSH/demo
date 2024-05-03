@@ -11,8 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.assets.demo.services.ProfileService;
 
+import java.net.ConnectException;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/profile")
@@ -40,14 +42,19 @@ public class ProfileController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProfileById(@PathVariable String id) {
-        Profile profile = profileService.getProfileById(id);
-        if (profile != null) {
+        try {
+            Optional<Profile> profile = profileService.getProfileById(id);
             return ResponseEntity.ok(profile);
-        } else {
-            String notFoundMessage = messageSource.getMessage("profile.not.found", new Object[]{id}, getLocale());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(notFoundMessage);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+            if (e.getCause() instanceof ConnectException) {
+                String errorMessage = messageSource.getMessage("db.connection.error", null, Locale.getDefault());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Errore durante la richiesta");
         }
     }
+
 
     @GetMapping()
     public ResponseEntity<?> getAllProfileIds() {
