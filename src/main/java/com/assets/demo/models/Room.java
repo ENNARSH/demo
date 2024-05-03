@@ -7,7 +7,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 @Data
 @Builder
-@Document(indexName = "room")
+@Document(indexName = "room", createIndex = false)
 public class Room {
 
     @Id

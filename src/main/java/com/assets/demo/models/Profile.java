@@ -9,7 +9,7 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 @Data
 @Builder
-@Document(indexName = "profile")
+@Document(indexName = "profile", createIndex = false)
 public class Profile {
 
     @Id

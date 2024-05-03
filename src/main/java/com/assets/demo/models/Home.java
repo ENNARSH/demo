@@ -8,13 +8,13 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 @Data
 @Builder
-@Document(indexName = "home")
+@Document(indexName = "home", createIndex = false)
 public class Home {
 
     @Id
     private String id;
     private String name;
-    private String usernameID; //TODO: se cancello una casa, deve cancellare automaticamente le stanze, completa logica di cancellazione profile
+    private String usernameID;
     private Position position;
 
     public boolean belongsToProfile(HomeDTO homeDTO) {
