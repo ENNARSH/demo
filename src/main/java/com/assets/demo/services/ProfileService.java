@@ -64,9 +64,7 @@ public class ProfileService {
             if (profile != null) {
                 String username = profile.getUsername();
                 profileRepo.delete(profile);
-                // Elimina le case associate al profilo
                 homeRepo.deleteByUsernameID(username);
-                // Elimina le stanze associate al profilo
                 roomRepo.deleteByUsernameID(username);
                 return true;
             }

@@ -31,8 +31,6 @@ public class RoomService {
                 .build();
     }
 
-
-
     public Room getRoomById(String id) {
         return roomRepo.findById(id).orElse(null);
     }

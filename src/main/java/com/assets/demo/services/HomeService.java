@@ -2,10 +2,14 @@ package com.assets.demo.services;
 
 import com.assets.demo.dto.HomeDTO;
 import com.assets.demo.models.Home;
+import com.assets.demo.models.Room;
 import com.assets.demo.repository.HomeRepo;
+import com.assets.demo.repository.RoomRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -13,6 +17,9 @@ public class HomeService {
 
     @Autowired
     private HomeRepo homeRepo;
+
+    @Autowired
+    private RoomRepo roomRepo;
 
     public Home createHome(HomeDTO homeDTO) {
         Home builtHome = buildBody(homeDTO);
@@ -31,20 +38,20 @@ public class HomeService {
                 .build();
     }
 
-
     public Home getHomeById(String id) {
         Optional<Home> optionalHome = homeRepo.findById(id);
         return optionalHome.isPresent() ? optionalHome.get() : null;
     }
 
-
-//    public List<Home> getAllHomes(String username) {
-//        return homeRepo.findAllHomesByUsername(username);
-//    }
-
-    public boolean deleteHomeById(String username) {
-        if (homeRepo.existsById(username)) {
-            homeRepo.deleteById(username);
+    @Transactional
+    public boolean deleteHomeById(String homeID) {
+        if (homeRepo.existsById(homeID)) {
+            homeRepo.deleteById(homeID);
+            String[] parts = homeID.split(":");
+            List<Room> rooms = roomRepo.findByUsernameID(parts[0]);
+            for (Room room : rooms) {
+                roomRepo.deleteById(room.getId());
+            }
             return true;
         } else {
             return false;

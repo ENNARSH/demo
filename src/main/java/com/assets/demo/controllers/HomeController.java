@@ -16,7 +16,7 @@ public class HomeController {
     @Autowired
     private HomeService homeService;
 
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<?> createHome(@RequestBody HomeDTO homeDTO) {
         try {
             Home createdHome = homeService.createHome(homeDTO);
@@ -40,15 +40,9 @@ public class HomeController {
         }
     }
 
-//    @GetMapping("/{username}/homes/all")
-//    public ResponseEntity<List<Home>> getAllHomes(@PathVariable String username) {
-//        List<Home> homes = homeService.getAllHomes(username);
-//        return new ResponseEntity<>(homes, HttpStatus.OK);
-//    }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteHomeById(@RequestBody String username, @PathVariable String id) {
-        boolean deleted = homeService.deleteHomeById(username);
+    public ResponseEntity<String> deleteHomeById(@PathVariable String id) {
+        boolean deleted = homeService.deleteHomeById(id);
         if (deleted) {
             return ResponseEntity.ok("Casa eliminata con successo");
         } else {
