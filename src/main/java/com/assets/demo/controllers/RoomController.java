@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -40,19 +41,30 @@ public class RoomController {
     }
 
 
-    @GetMapping("/{roomName}")
-    public ResponseEntity<Room> getRoomById(@PathVariable String username, @PathVariable String homeName, @PathVariable String roomName) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Room> getRoomById(@PathVariable String id) {
         try {
-            String roomId = username.toLowerCase() + ":" + homeName.toLowerCase() + ":" + roomName.toLowerCase();
-            Room room = roomService.getRoomById(roomId);
+//            String roomId = username.toLowerCase() + ":" + homeName.toLowerCase() + ":" + roomName.toLowerCase();
+            Room room = roomService.getRoomById(id);
             if (room != null) {
                 return ResponseEntity.ok(room);
             } else {
-                messageSource.getMessage("not.found", new Object[]{roomId}, Locale.getDefault());
+                messageSource.getMessage("not.found", new Object[]{id}, Locale.getDefault());
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping()
+    public ResponseEntity<?> getAllRoomsIds() {
+        List<Room> roomsIds = roomService.getAllRoomsIds();
+        if (!roomsIds.isEmpty()){
+            return ResponseEntity.ok(roomsIds);
+        } else {
+            String emptyListMessage = messageSource.getMessage("Vuoto", null, Locale.getDefault());
+            return ResponseEntity.ok(emptyListMessage);
         }
     }
 
