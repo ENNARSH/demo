@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Locale;
 
 
@@ -33,11 +34,11 @@ public class HomeController {
         }
     }
 
-    @GetMapping("/{username}/{id}")
-    public ResponseEntity<Home> getHomeById(@PathVariable HomeDTO homeDTO, @PathVariable String id) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Home> getHomeById(@PathVariable String id) {
         try {
             Home home = homeService.getHomeById(id);
-            if (home != null && home.belongsToProfile(homeDTO)) {
+            if (home != null) {
                 return new ResponseEntity<>(home, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN); // Accesso vietato se la casa non appartiene al profilo
@@ -79,4 +80,19 @@ public class HomeController {
         }
     }
 
+    @GetMapping()
+    public ResponseEntity<List<Home>> getAllHomeIds() {
+        try {
+            List<Home> homeIds = homeService.getAllHomeIds();
+            if (!homeIds.isEmpty()) {
+                return ResponseEntity.ok(homeIds);
+            } else {
+                String emptyListMessage = messageSource.getMessage("empty.list", null, Locale.getDefault());
+                throw new RuntimeException(emptyListMessage);
+            }
+        } catch (Exception e) {
+            String errorMessage = messageSource.getMessage("error.getting.homes", null, Locale.getDefault());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 }

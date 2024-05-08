@@ -91,5 +91,8 @@ public class HomeService {
         }
     }
 
+    public List<Home> getAllHomeIds() {
+        return homeRepo.findAllIds();
+    }
 
 }
