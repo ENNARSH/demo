@@ -2,6 +2,7 @@ package com.assets.demo.controllers;
 
 import com.assets.demo.dto.ProfileDTO;
 import com.assets.demo.models.Profile;
+import com.assets.demo.services.InfluxService;
 import com.assets.demo.utils.ProfileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -29,11 +30,15 @@ public class ProfileController {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private InfluxService influxService;
+
     @PostMapping()
     public ResponseEntity<?> createProfile(@RequestBody ProfileDTO profileDTO) {
         try {
             profileUtils.checkDTO(profileDTO);
             Profile createdProfile = profileService.createProfile(profileDTO);
+            influxService.createDatabase(createdProfile.getId());
             return ResponseEntity.ok(createdProfile);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
