@@ -3,6 +3,7 @@ package com.assets.demo.controllers;
 import com.assets.demo.dto.HomeDTO;
 import com.assets.demo.models.Home;
 import com.assets.demo.services.HomeService;
+import com.assets.demo.services.InfluxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
@@ -23,10 +24,15 @@ public class HomeController {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private InfluxService influxService;
+
     @PostMapping()
     public ResponseEntity<?> createHome(@RequestBody HomeDTO homeDTO) {
         try {
             Home createdHome = homeService.createHome(homeDTO);
+            influxService.createRetentionPolicy(createdHome.getName().trim().toLowerCase().replace(" ", "_"),
+                    createdHome.getUsernameID().toLowerCase().replace(" ", "_"));
             return ResponseEntity.ok(createdHome);
         } catch (Exception e) {
             String errorMessage = messageSource.getMessage("create.error", new Object[]{e.getMessage()}, Locale.getDefault());

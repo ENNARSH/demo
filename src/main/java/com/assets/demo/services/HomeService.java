@@ -5,6 +5,7 @@ import com.assets.demo.models.Home;
 import com.assets.demo.models.Room;
 import com.assets.demo.repository.HomeRepo;
 import com.assets.demo.repository.RoomRepo;
+import com.assets.demo.utils.GenericUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -37,12 +38,10 @@ public class HomeService {
     }
 
     private Home buildBody(HomeDTO homeDTO) {
-        String homeName = homeDTO.getName().trim();
-        String homeId = homeDTO.getUsername().toLowerCase() + ":" + homeName.toLowerCase()
-                .replace(" ", "_");
+        String homeID = GenericUtils.generateID(homeDTO.getUsername(), homeDTO.getName());
         return Home.builder()
-                .id(homeId)
-                .name(homeName)
+                .id(homeID)
+                .name(homeDTO.getName())
                 .usernameID(homeDTO.getUsername())
                 .position(homeDTO.getPosition())
                 .build();
