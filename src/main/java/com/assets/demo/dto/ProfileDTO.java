@@ -1,13 +1,14 @@
 package com.assets.demo.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
 
 @Data
 @Builder
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor
 public class ProfileDTO {
 
     private String username;

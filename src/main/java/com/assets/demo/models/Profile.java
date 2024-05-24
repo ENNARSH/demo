@@ -1,7 +1,6 @@
 package com.assets.demo.models;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -9,6 +8,8 @@ import org.springframework.data.elasticsearch.annotations.Document;
 
 @Data
 @Builder
+@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@NoArgsConstructor
 @Document(indexName = "profile", createIndex = false)
 public class Profile {
 

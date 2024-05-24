@@ -8,6 +8,7 @@ import com.assets.demo.repository.RoomRepo;
 import com.assets.demo.utils.ProfileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.data.elasticsearch.ResourceNotFoundException;
 import org.springframework.data.elasticsearch.UncategorizedElasticsearchException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -107,23 +108,29 @@ public class ProfileService {
     }
 
     public Profile updateProfile(String id, ProfileDTO profileDTO) {
-        Profile existingProfile = null;
+        if (id == null) {
+            throw new IllegalArgumentException("L'ID del profilo non può essere nullo.");
+        }
+
         try {
-            if (profileRepo.findById(id).isPresent()) {
-                existingProfile = profileRepo.findById(id).get();
-            }
-            if (existingProfile != null) {
+            Optional<Profile> optionalProfile = profileRepo.findById(id);
+            if (optionalProfile.isPresent()) {
+                Profile existingProfile = optionalProfile.get();
                 existingProfile.setUsername(profileDTO.getUsername());
                 existingProfile.setName(profileDTO.getName());
                 existingProfile.setSurname(profileDTO.getSurname());
                 existingProfile.setPassword(profileDTO.getPassword());
                 return profileRepo.save(existingProfile);
+            } else {
+                throw new ResourceNotFoundException("Profilo non trovato con id: " + id);
             }
+        } catch (ResourceNotFoundException e) {
+            throw e;
         } catch (Exception e) {
-            throw new RuntimeException("Profilo non trovato con id " + id, e);
+            throw new RuntimeException("Impossibile aggiornare il profilo con id " + id, e);
         }
-        return null;
     }
+
 
 
 }
